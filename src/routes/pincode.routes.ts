@@ -10,6 +10,9 @@ import {
   getPincodeDetails,
   getPincodeV1,
   searchByOfficeName,
+  getStatePincodes,
+  getStateDistricts,
+  getDistrictPincodes,
 } from "../controllers/pincode.controller.js";
 import { cacheService } from "../cache/index.js";
 
@@ -47,6 +50,24 @@ router.get(
   validate({ params: postOfficeSearchSchema }),
   searchByOfficeName
 );
+
+/**
+ * @route   GET /api/v1/state/:state/pincodes
+ * @desc    Get all pincodes in a state (e.g. /api/v1/state/Tamil%20Nadu/pincodes)
+ */
+router.get("/api/v1/state/:state/pincodes", getStatePincodes);
+
+/**
+ * @route   GET /api/v1/state/:state/districts
+ * @desc    Get all districts in a state with pincode and post office counts
+ */
+router.get("/api/v1/state/:state/districts", getStateDistricts);
+
+/**
+ * @route   GET /api/v1/district/:district/pincodes
+ * @desc    Get all pincodes in a district (e.g. /api/v1/district/Vellore/pincodes)
+ */
+router.get("/api/v1/district/:district/pincodes", getDistrictPincodes);
 
 /**
  * @route   GET /api/v1/cache/stats

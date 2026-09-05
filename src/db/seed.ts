@@ -15,421 +15,66 @@ export interface PostOfficeRecord {
   region: string;
   block: string | null;
   state: string;
-  country?: string;
-  description?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
+  country: string;
+  description: string | null;
+  latitude: number | null;
+  longitude: number | null;
 }
 
-// Built-in curated dataset with updated state and district reorganizations
-export const INITIAL_DATA: PostOfficeRecord[] = [
-  // 632006 - Vellore District, Tamil Nadu (with updated details)
-  {
-    office_name: "Gandhinagar (Vellore)",
-    pincode: "632006",
-    branch_type: "Sub Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9698,
-    longitude: 79.1384,
-  },
-  {
-    office_name: "Gandhinagar East",
-    pincode: "632006",
-    branch_type: "Sub Post Office",
-    delivery_status: "Non-Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9712,
-    longitude: 79.1425,
-  },
-  {
-    office_name: "Gandhinagar West",
-    pincode: "632006",
-    branch_type: "Sub Post Office",
-    delivery_status: "Non-Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9675,
-    longitude: 79.1310,
-  },
-  {
-    office_name: "Jaffarapettai",
-    pincode: "632006",
-    branch_type: "Branch Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9810,
-    longitude: 79.1450,
-  },
-  {
-    office_name: "Kangeyanallur",
-    pincode: "632006",
-    branch_type: "Branch Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9554,
-    longitude: 79.1482,
-  },
-  {
-    office_name: "Senur",
-    pincode: "632006",
-    branch_type: "Branch Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9902,
-    longitude: 79.1620,
-  },
-  {
-    office_name: "Thandalam Krishnapuram",
-    pincode: "632006",
-    branch_type: "Branch Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9840,
-    longitude: 79.1550,
-  },
-  {
-    office_name: "Virudhambattu",
-    pincode: "632006",
-    branch_type: "Sub Post Office",
-    delivery_status: "Non-Delivery",
-    circle: "Tamilnadu",
-    district: "Vellore",
-    division: "Vellore",
-    region: "Chennai Region",
-    block: "Katpadi",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9610,
-    longitude: 79.1290,
-  },
+function toTitleCase(str: string): string {
+  if (!str) return "";
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
-  // Newly carved district: Ranipet (bifurcated from Vellore in 2019)
-  {
-    office_name: "Ranipet H.O",
-    pincode: "632401",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Ranipet",
-    division: "Arakkonam",
-    region: "Chennai Region",
-    block: "Walajah",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9229,
-    longitude: 79.3323,
-  },
-  {
-    office_name: "Walajapet S.O",
-    pincode: "632513",
-    branch_type: "Sub Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Ranipet",
-    division: "Arakkonam",
-    region: "Chennai Region",
-    block: "Walajah",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.9300,
-    longitude: 79.3800,
-  },
+function formatBranchType(type: string): string {
+  const t = (type || "").toUpperCase().trim();
+  if (t === "BO" || t === "B.O" || t === "BRANCH POST OFFICE") return "Branch Post Office";
+  if (t === "SO" || t === "S.O" || t === "SUB POST OFFICE") return "Sub Post Office";
+  if (t === "HO" || t === "H.O" || t === "HEAD POST OFFICE") return "Head Post Office";
+  if (t === "GPO" || t === "G.P.O" || t === "GENERAL POST OFFICE") return "General Post Office";
+  return type || "Sub Post Office";
+}
 
-  // Newly carved district: Tirupattur (bifurcated from Vellore in 2019)
-  {
-    office_name: "Tirupattur H.O",
-    pincode: "635601",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Tirupattur",
-    division: "Tirupattur",
-    region: "Western Region",
-    block: "Tirupattur",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.4950,
-    longitude: 78.5678,
-  },
+function formatDeliveryStatus(status: string): string {
+  const s = (status || "").toLowerCase().trim();
+  if (s.includes("non")) return "Non-Delivery";
+  return "Delivery";
+}
 
-  // Newly carved district: Chengalpattu (bifurcated from Kanchipuram in 2019)
-  {
-    office_name: "Chengalpattu H.O",
-    pincode: "603001",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Chengalpattu",
-    division: "Chengalpattu",
-    region: "Chennai Region",
-    block: "Chengalpattu",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 12.6841,
-    longitude: 79.9836,
-  },
-
-  // Chennai
-  {
-    office_name: "Anna Nagar H.O",
-    pincode: "600040",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Chennai",
-    division: "Chennai City North",
-    region: "Chennai Region",
-    block: "Aminjikarai",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 13.0850,
-    longitude: 80.2101,
-  },
-  {
-    office_name: "T Nagar H.O",
-    pincode: "600017",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Tamilnadu",
-    district: "Chennai",
-    division: "Chennai City South",
-    region: "Chennai Region",
-    block: "Mambalam",
-    state: "Tamil Nadu",
-    country: "India",
-    description: null,
-    latitude: 13.0418,
-    longitude: 80.2341,
-  },
-
-  // Bengaluru - Karnataka
-  {
-    office_name: "Koramangala VI Block S.O",
-    pincode: "560095",
-    branch_type: "Sub Post Office",
-    delivery_status: "Delivery",
-    circle: "Karnataka",
-    district: "Bengaluru Urban",
-    division: "Bangalore South",
-    region: "Bengaluru HQ Region",
-    block: "Bangalore South",
-    state: "Karnataka",
-    country: "India",
-    description: null,
-    latitude: 12.9352,
-    longitude: 77.6245,
-  },
-  {
-    office_name: "Indiranagar H.O",
-    pincode: "560038",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Karnataka",
-    district: "Bengaluru Urban",
-    division: "Bangalore East",
-    region: "Bengaluru HQ Region",
-    block: "Bangalore East",
-    state: "Karnataka",
-    country: "India",
-    description: null,
-    latitude: 12.9784,
-    longitude: 77.6408,
-  },
-
-  // Hyderabad - Telangana (State accurately reflected, not old AP)
-  {
-    office_name: "Hitec City S.O",
-    pincode: "500081",
-    branch_type: "Sub Post Office",
-    delivery_status: "Delivery",
-    circle: "Telangana",
-    district: "Rangareddy",
-    division: "Hyderabad South East",
-    region: "Hyderabad City Region",
-    block: "Serilingampally",
-    state: "Telangana",
-    country: "India",
-    description: null,
-    latitude: 17.4435,
-    longitude: 78.3772,
-  },
-  {
-    office_name: "Gachibowli S.O",
-    pincode: "500032",
-    branch_type: "Sub Post Office",
-    delivery_status: "Delivery",
-    circle: "Telangana",
-    district: "Rangareddy",
-    division: "Hyderabad South East",
-    region: "Hyderabad City Region",
-    block: "Serilingampally",
-    state: "Telangana",
-    country: "India",
-    description: null,
-    latitude: 17.4401,
-    longitude: 78.3489,
-  },
-  {
-    office_name: "Hyderabad G.P.O.",
-    pincode: "500001",
-    branch_type: "General Post Office",
-    delivery_status: "Delivery",
-    circle: "Telangana",
-    district: "Hyderabad",
-    division: "Hyderabad City",
-    region: "Hyderabad City Region",
-    block: "Abids",
-    state: "Telangana",
-    country: "India",
-    description: null,
-    latitude: 17.3871,
-    longitude: 78.4734,
-  },
-
-  // Andhra Pradesh (Updated newly bifurcated districts like Tirupati, NTR)
-  {
-    office_name: "Tirupati H.O",
-    pincode: "517501",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Andhra Pradesh",
-    district: "Tirupati",
-    division: "Tirupati",
-    region: "Kurnool Region",
-    block: "Tirupati Urban",
-    state: "Andhra Pradesh",
-    country: "India",
-    description: null,
-    latitude: 13.6288,
-    longitude: 79.4192,
-  },
-  {
-    office_name: "Vijayawada H.O",
-    pincode: "520001",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Andhra Pradesh",
-    district: "NTR",
-    division: "Vijayawada",
-    region: "Vijayawada Region",
-    block: "Vijayawada Urban",
-    state: "Andhra Pradesh",
-    country: "India",
-    description: null,
-    latitude: 16.5062,
-    longitude: 80.6480,
-  },
-
-  // Mumbai - Maharashtra
-  {
-    office_name: "Nariman Point S.O",
-    pincode: "400021",
-    branch_type: "Sub Post Office",
-    delivery_status: "Delivery",
-    circle: "Maharashtra",
-    district: "Mumbai",
-    division: "Mumbai City South",
-    region: "Mumbai Region",
-    block: "Mumbai",
-    state: "Maharashtra",
-    country: "India",
-    description: null,
-    latitude: 18.9256,
-    longitude: 72.8242,
-  },
-  {
-    office_name: "Bandra West S.O",
-    pincode: "400050",
-    branch_type: "Sub Post Office",
-    delivery_status: "Delivery",
-    circle: "Maharashtra",
-    district: "Mumbai Suburban",
-    division: "Mumbai City West",
-    region: "Mumbai Region",
-    block: "Bandra",
-    state: "Maharashtra",
-    country: "India",
-    description: null,
-    latitude: 19.0596,
-    longitude: 72.8295,
-  },
-
-  // New Delhi
-  {
-    office_name: "Connaught Place H.O",
-    pincode: "110001",
-    branch_type: "Head Post Office",
-    delivery_status: "Delivery",
-    circle: "Delhi",
-    district: "New Delhi",
-    division: "New Delhi Central",
-    region: "Delhi Region",
-    block: "New Delhi",
-    state: "Delhi",
-    country: "India",
-    description: null,
-    latitude: 28.6304,
-    longitude: 77.2177,
+function formatCircle(circle: string): string {
+  let c = circle.replace(/Circle/i, "").trim();
+  if (c.toLowerCase() === "tamil nadu" || c.toLowerCase() === "tamilnadu") {
+    return "Tamilnadu";
   }
-];
+  return toTitleCase(c);
+}
 
-export async function insertBatch(records: PostOfficeRecord[]) {
-  if (records.length === 0) return;
+function formatState(state: string): string {
+  const s = state.toUpperCase().trim();
+  if (s === "TAMIL NADU" || s === "TAMILNADU") return "Tamil Nadu";
+  if (s === "ANDHRA PRADESH") return "Andhra Pradesh";
+  if (s === "TELANGANA") return "Telangana";
+  if (s === "KARNATAKA") return "Karnataka";
+  if (s === "KERALA") return "Kerala";
+  if (s === "MAHARASHTRA") return "Maharashtra";
+  if (s === "DELHI") return "Delhi";
+  return toTitleCase(state);
+}
+
+export async function insertBatch(rawRecords: PostOfficeRecord[]) {
+  if (rawRecords.length === 0) return;
+
+  // Deduplicate within the batch to prevent PostgreSQL 21000 ON CONFLICT error
+  const recordMap = new Map<string, PostOfficeRecord>();
+  for (const r of rawRecords) {
+    const key = `${r.pincode}__${r.office_name.toLowerCase().trim()}`;
+    recordMap.set(key, r);
+  }
+  const records = Array.from(recordMap.values());
 
   const client = await pool.connect();
   try {
@@ -442,7 +87,7 @@ export async function insertBatch(records: PostOfficeRecord[]) {
       SELECT * FROM UNNEST(
         $1::text[], $2::text[], $3::text[], $4::text[],
         $5::text[], $6::text[], $7::text[], $8::text[], $9::text[],
-        $10::text[], $11::text[], $12::text[], $13::numeric[], $14::numeric[]
+        $10::text[], $11::text[], $12::text[], $13::double precision[], $14::double precision[]
       )
       ON CONFLICT (pincode, office_name) DO UPDATE SET
         branch_type = EXCLUDED.branch_type,
@@ -497,72 +142,91 @@ export async function insertBatch(records: PostOfficeRecord[]) {
 }
 
 /**
- * Seed database from custom CSV file if provided, otherwise seed initial curated records
+ * Seed database from CSV file.
+ * If stateFilter is specified (e.g. "TAMIL NADU"), only rows matching that state are seeded.
  */
-export async function seedDatabase(csvFilePath?: string) {
+export async function seedFromCsv(csvFilePath: string, stateFilter?: string) {
   await runMigrations();
 
-  if (csvFilePath && fs.existsSync(csvFilePath)) {
-    console.log(`📁 Loading dataset from CSV: ${csvFilePath}`);
-    const parser = fs.createReadStream(csvFilePath).pipe(
-      parse({
-        columns: true,
-        skip_empty_lines: true,
-        trim: true,
-      })
-    );
+  if (!fs.existsSync(csvFilePath)) {
+    throw new Error(`CSV file not found: ${csvFilePath}`);
+  }
 
-    let batch: PostOfficeRecord[] = [];
-    let totalCount = 0;
-    const BATCH_SIZE = 1000;
+  console.log(`📁 Loading dataset from CSV: ${csvFilePath}`);
+  if (stateFilter) {
+    console.log(`🔍 Filtering for state: ${stateFilter}`);
+  }
 
-    for await (const row of parser) {
-      // Handles both official data.gov.in columns and lowercase variants
-      const record: PostOfficeRecord = {
-        office_name: row.officename || row.OfficeName || row.office_name || row.Name || "",
-        pincode: String(row.pincode || row.Pincode || "").padStart(6, "0"),
-        branch_type: row.officetype || row.OfficeType || row.branch_type || row.BranchType || "Sub Post Office",
-        delivery_status: row.deliverystatus || row.DeliveryStatus || row.delivery_status || "Delivery",
-        circle: row.circlename || row.CircleName || row.circle || row.Circle || "",
-        district: row.district || row.District || row.Districtname || "",
-        division: row.divisionname || row.DivisionName || row.division || row.Division || "",
-        region: row.regionname || row.RegionName || row.region || row.Region || "",
-        block: row.taluk || row.block || row.Block || null,
-        state: row.statename || row.StateName || row.state || row.State || "",
-        country: "India",
-        description: null,
-        latitude: row.latitude ? parseFloat(row.latitude) : null,
-        longitude: row.longitude ? parseFloat(row.longitude) : null,
-      };
+  const parser = fs.createReadStream(csvFilePath).pipe(
+    parse({
+      columns: true,
+      skip_empty_lines: true,
+      trim: true,
+    })
+  );
 
-      if (record.pincode.length === 6 && record.office_name) {
-        batch.push(record);
-        if (batch.length >= BATCH_SIZE) {
-          await insertBatch(batch);
-          totalCount += batch.length;
-          console.log(`⚡ Inserted ${totalCount} records...`);
-          batch = [];
-        }
-      }
+  let batch: PostOfficeRecord[] = [];
+  let totalCount = 0;
+  const BATCH_SIZE = 2500;
+
+  for await (const row of parser) {
+    const rawState = row.StateName || row.statename || row.state || row.State || "";
+    if (stateFilter && rawState.toUpperCase() !== stateFilter.toUpperCase()) {
+      continue;
     }
 
-    if (batch.length > 0) {
+    const officeName = (row.OfficeName || row.officename || row.Name || "").trim();
+    const rawPincode = String(row.Pincode || row.pincode || "").trim();
+
+    if (!officeName || !/^[1-9][0-9]{5}$/.test(rawPincode)) {
+      continue;
+    }
+
+    const record: PostOfficeRecord = {
+      office_name: officeName,
+      pincode: rawPincode,
+      branch_type: formatBranchType(row.OfficeType || row.officetype || row.branch_type || ""),
+      delivery_status: formatDeliveryStatus(row.Delivery || row.deliverystatus || row.delivery_status || ""),
+      circle: formatCircle(row.CircleName || row.circlename || row.circle || ""),
+      district: toTitleCase(row.District || row.district || row.Districtname || ""),
+      division: toTitleCase(row.DivisionName || row.divisionname || row.division || ""),
+      region: toTitleCase(row.RegionName || row.regionname || row.region || ""),
+      block: row.Taluk || row.taluk || row.block || row.Block ? toTitleCase(row.Taluk || row.taluk || row.block || row.Block) : null,
+      state: formatState(rawState),
+      country: "India",
+      description: null,
+      latitude: row.Latitude && !isNaN(parseFloat(row.Latitude)) ? parseFloat(row.Latitude) : null,
+      longitude: row.Longitude && !isNaN(parseFloat(row.Longitude)) ? parseFloat(row.Longitude) : null,
+    };
+
+    batch.push(record);
+
+    if (batch.length >= BATCH_SIZE) {
       await insertBatch(batch);
       totalCount += batch.length;
+      console.log(`⚡ Ingested ${totalCount} post offices...`);
+      batch = [];
     }
-    console.log(`🎉 Seeding complete! Total ${totalCount} records imported.`);
-  } else {
-    console.log(`🌱 Seeding curated initial records (${INITIAL_DATA.length} post offices)...`);
-    await insertBatch(INITIAL_DATA);
-    console.log(`🎉 Seeding complete! ${INITIAL_DATA.length} post offices populated.`);
   }
+
+  if (batch.length > 0) {
+    await insertBatch(batch);
+    totalCount += batch.length;
+  }
+
+  console.log(`🎉 Ingestion complete! Total ${totalCount} post offices populated in PostgreSQL.`);
+  return totalCount;
 }
 
 if (process.argv[1] === new URL(import.meta.url).pathname) {
   const fileArgIndex = process.argv.indexOf("--file");
-  const filePath = fileArgIndex !== -1 ? process.argv[fileArgIndex + 1] : undefined;
+  const stateArgIndex = process.argv.indexOf("--state");
 
-  seedDatabase(filePath)
+  const defaultCsvPath = path.join(path.dirname(new URL(import.meta.url).pathname), "../../data/pincodes.csv");
+  const filePath = fileArgIndex !== -1 ? process.argv[fileArgIndex + 1] : defaultCsvPath;
+  const stateFilter = stateArgIndex !== -1 ? process.argv[stateArgIndex + 1] : undefined;
+
+  seedFromCsv(filePath, stateFilter)
     .then(() => pool.end())
     .catch((err) => {
       console.error("❌ Seeding failed:", err);

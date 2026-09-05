@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "c7a8b9e1-23d4-4f56-a789-0bc123456789",
     "name": "India Pincode API",
-    "description": "High-performance backend API for Indian Postal PIN codes with updated district and state data, dual-tier caching (LRU + Redis), and API key authentication.",
+    "description": "High-performance backend API for Indian Postal PIN codes with complete, updated data for all 38 districts in Tamil Nadu (11,800+ post offices) and 157,000+ records across India.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -34,7 +34,7 @@
   },
   "item": [
     {
-      "name": "1. Pincode Lookup (PostalPincode.in Format)",
+      "name": "1. Pincode Lookup (PostalPincode.in Format - 632006)",
       "request": {
         "method": "GET",
         "header": [],
@@ -47,7 +47,7 @@
       }
     },
     {
-      "name": "2. Pincode Lookup - Newly Carved District (Ranipet)",
+      "name": "2. Pincode Lookup - Newly Carved District (Ranipet - 632401)",
       "request": {
         "method": "GET",
         "header": [],
@@ -60,33 +60,59 @@
       }
     },
     {
-      "name": "3. Pincode Lookup - Newly Carved District (Tirupattur)",
+      "name": "3. Pincode Lookup - Chennai GPO (600001)",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pincode/635601",
+          "raw": "{{baseUrl}}/pincode/600001",
           "host": ["{{baseUrl}}"],
-          "path": ["pincode", "635601"]
+          "path": ["pincode", "600001"]
         },
-        "description": "Accurately returns District as Tirupattur (bifurcated from Vellore in 2019)."
+        "description": "Returns all 6 post offices under Chennai GPO."
       }
     },
     {
-      "name": "4. Pincode Lookup - Telangana State (Hitec City)",
+      "name": "4. All 38 Districts in Tamil Nadu",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/pincode/500081",
+          "raw": "{{baseUrl}}/api/v1/state/Tamil%20Nadu/districts",
           "host": ["{{baseUrl}}"],
-          "path": ["pincode", "500081"]
+          "path": ["api", "v1", "state", "Tamil Nadu", "districts"]
         },
-        "description": "Accurately returns State as Telangana and District as Rangareddy."
+        "description": "Returns all 38 districts in Tamil Nadu with unique pincodes and post office counts."
       }
     },
     {
-      "name": "5. RESTful V1 Pincode with Delivery Filter",
+      "name": "5. All Pincodes in Tamil Nadu",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/state/Tamil%20Nadu/pincodes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "state", "Tamil Nadu", "pincodes"]
+        },
+        "description": "Returns all 2,000+ unique pincodes across Tamil Nadu."
+      }
+    },
+    {
+      "name": "6. All Pincodes in District (Vellore)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/district/Vellore/pincodes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "district", "Vellore", "pincodes"]
+        },
+        "description": "Returns all 51 pincodes and post office counts in Vellore district."
+      }
+    },
+    {
+      "name": "7. RESTful V1 Pincode with Delivery Filter",
       "request": {
         "method": "GET",
         "header": [],
@@ -105,7 +131,7 @@
       }
     },
     {
-      "name": "6. Search Post Office by Name",
+      "name": "8. Search Post Office by Name",
       "request": {
         "method": "GET",
         "header": [],
@@ -118,7 +144,7 @@
       }
     },
     {
-      "name": "7. Cache Performance & Stats",
+      "name": "9. Cache Performance & Stats",
       "request": {
         "method": "GET",
         "header": [],
@@ -131,7 +157,7 @@
       }
     },
     {
-      "name": "8. Health Check Probe",
+      "name": "10. Health Check Probe",
       "request": {
         "auth": {
           "type": "noauth"
@@ -147,7 +173,7 @@
       }
     },
     {
-      "name": "9. Error Case - Missing API Key",
+      "name": "11. Error Case - Missing API Key",
       "request": {
         "auth": {
           "type": "noauth"
@@ -163,7 +189,7 @@
       }
     },
     {
-      "name": "10. Error Case - Invalid Pincode Format",
+      "name": "12. Error Case - Invalid Pincode Format",
       "request": {
         "method": "GET",
         "header": [],

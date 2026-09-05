@@ -10,7 +10,9 @@
     "db:migrate": "tsx src/db/migrate.ts",
     "db:seed": "tsx src/db/seed.ts",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:seed:tn": "tsx src/db/seed.ts --state \"TAMIL NADU\"",
+    "db:seed:all": "tsx src/db/seed.ts"
   },
   "keywords": [
     "pincode",

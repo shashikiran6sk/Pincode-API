@@ -4,7 +4,7 @@ export const swaggerDocument = {
     title: "India Pincode Directory API",
     version: "1.0.0",
     description:
-      "High-performance, production-ready backend API for Indian Postal PIN codes with up-to-date state and district bifurcations, dual-tier caching (LRU + Redis), and API key authentication.",
+      "High-performance, production-ready backend API for Indian Postal PIN codes with up-to-date state and district bifurcations (including all 38 districts and 11,800+ post offices in Tamil Nadu, and 157,000+ across India), dual-tier caching (LRU + Redis), and API key authentication.",
     contact: {
       name: "Pincode API Support",
     },
@@ -73,6 +73,62 @@ export const swaggerDocument = {
           data: {
             type: "array",
             items: { $ref: "#/components/schemas/PostOffice" },
+          },
+        },
+      },
+      StateDistrictsResponse: {
+        type: "object",
+        properties: {
+          status: { type: "string", example: "success" },
+          state: { type: "string", example: "Tamil Nadu" },
+          total_districts: { type: "integer", example: 38 },
+          districts: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                district: { type: "string", example: "Vellore" },
+                unique_pincodes: { type: "integer", example: 51 },
+                total_post_offices: { type: "integer", example: 261 },
+              },
+            },
+          },
+        },
+      },
+      StatePincodesResponse: {
+        type: "object",
+        properties: {
+          status: { type: "string", example: "success" },
+          state: { type: "string", example: "Tamil Nadu" },
+          total_pincodes: { type: "integer", example: 2194 },
+          pincodes: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                pincode: { type: "string", example: "600001" },
+                district: { type: "string", example: "Chennai" },
+                post_offices_count: { type: "integer", example: 6 },
+              },
+            },
+          },
+        },
+      },
+      DistrictPincodesResponse: {
+        type: "object",
+        properties: {
+          status: { type: "string", example: "success" },
+          district: { type: "string", example: "Vellore" },
+          total_pincodes: { type: "integer", example: 51 },
+          pincodes: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                pincode: { type: "string", example: "632006" },
+                post_offices_count: { type: "integer", example: 15 },
+              },
+            },
           },
         },
       },
@@ -235,6 +291,81 @@ export const swaggerDocument = {
             content: {
               "application/json": {
                 schema: { $ref: "#/components/schemas/UnauthorizedResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/v1/state/{state}/pincodes": {
+      get: {
+        summary: "Get All Pincodes in a State",
+        description: "Returns all unique PIN codes in a given state (e.g. Tamil Nadu), along with district names and post office counts.",
+        parameters: [
+          {
+            name: "state",
+            in: "path",
+            required: true,
+            description: "State name (e.g. Tamil Nadu, Karnataka, Maharashtra)",
+            schema: { type: "string", example: "Tamil Nadu" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "List of all pincodes in the state",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/StatePincodesResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/v1/state/{state}/districts": {
+      get: {
+        summary: "Get All Districts in a State",
+        description: "Returns all 38 districts in Tamil Nadu (or any state) with their respective unique pincode and post office counts.",
+        parameters: [
+          {
+            name: "state",
+            in: "path",
+            required: true,
+            description: "State name (e.g. Tamil Nadu)",
+            schema: { type: "string", example: "Tamil Nadu" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "List of districts with stats",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/StateDistrictsResponse" },
+              },
+            },
+          },
+        },
+      },
+    },
+    "/api/v1/district/{district}/pincodes": {
+      get: {
+        summary: "Get All Pincodes in a District",
+        description: "Returns all PIN codes belonging to a given district (e.g. Vellore, Ranipet, Chennai).",
+        parameters: [
+          {
+            name: "district",
+            in: "path",
+            required: true,
+            description: "District name",
+            schema: { type: "string", example: "Vellore" },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "List of pincodes in the district",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/DistrictPincodesResponse" },
               },
             },
           },

@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS post_offices (
     state VARCHAR(100) NOT NULL,
     country VARCHAR(50) DEFAULT 'India',
     description TEXT,
-    latitude NUMERIC(10, 7),
-    longitude NUMERIC(10, 7),
+    latitude DOUBLE PRECISION,
+    longitude DOUBLE PRECISION,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
