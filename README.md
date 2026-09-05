@@ -41,18 +41,19 @@ Access the Swagger documentation in your browser:
 In Swagger UI, click the **Authorize** button at the top right and enter:
 `pincode_dev_secret_key_12345`
 
-### Postman Collection
-A complete Postman Collection is available in the repository at:
-[`postman/Pincode-API.postman_collection.json`](./postman/Pincode-API.postman_collection.json)
+### Postman Collection & Environments
+Pre-configured Postman files are located in the [`postman/`](./postman/) directory:
+- **Collection**: [`postman/Pincode-API.postman_collection.json`](./postman/Pincode-API.postman_collection.json)
+- **Local Environment**: [`postman/Pincode-API.postman_environment.json`](./postman/Pincode-API.postman_environment.json)
+- **Production Environment Template**: [`postman/Pincode-API-Prod.postman_environment.json`](./postman/Pincode-API-Prod.postman_environment.json)
+- **Postman Guide**: [`postman/README.md`](./postman/README.md)
 
 To import into Postman:
 1. Open Postman.
 2. Click **Import** (top left).
-3. Drag and drop the file `postman/Pincode-API.postman_collection.json`.
-4. The collection comes pre-configured with:
-   - Environment variables: `baseUrl` (`http://localhost:3000`), `apiKey` (`pincode_dev_secret_key_12345`)
-   - Pre-configured authorization header `x-api-key: {{apiKey}}`
-   - 10 sample requests covering lookups, filters, searches, health checks, and error cases.
+3. Drag and drop both `Pincode-API.postman_collection.json` and `Pincode-API.postman_environment.json`.
+4. In the top-right environment selector, select **`Pincode API - Local Environment`**.
+5. All requests will automatically use `{{baseUrl}}` and authenticate via `x-api-key: {{apiKey}}`.
 
 ---
 
