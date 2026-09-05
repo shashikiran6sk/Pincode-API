@@ -221,3 +221,144 @@ export async function searchByOfficeName(req: Request, res: Response, next: Next
     next(error);
   }
 }
+
+/**
+ * GET /api/v1/state/:state/pincodes
+ * List all pincodes in a state (e.g. Tamil Nadu)
+ */
+export async function getStatePincodes(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { state } = req.params;
+    const cacheKey = `state_pincodes:${state.toLowerCase().trim()}`;
+
+    const cached = await cacheService.get(cacheKey);
+    if (cached) {
+      res.setHeader("X-Cache", "HIT");
+      res.json(cached);
+      return;
+    }
+
+    const client = await pool.connect();
+    let rows: any[] = [];
+    try {
+      const result = await client.query(
+        `SELECT pincode, district, count(*)::int as post_offices_count 
+         FROM post_offices 
+         WHERE LOWER(state) = $1 
+         GROUP BY pincode, district 
+         ORDER BY pincode ASC`,
+        [state.toLowerCase().trim()]
+      );
+      rows = result.rows;
+    } finally {
+      client.release();
+    }
+
+    const response = {
+      status: "success",
+      state,
+      total_pincodes: rows.length,
+      pincodes: rows,
+    };
+
+    await cacheService.set(cacheKey, response);
+    res.setHeader("X-Cache", "MISS");
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * GET /api/v1/state/:state/districts
+ * List all districts in a state with post office counts
+ */
+export async function getStateDistricts(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { state } = req.params;
+    const cacheKey = `state_districts:${state.toLowerCase().trim()}`;
+
+    const cached = await cacheService.get(cacheKey);
+    if (cached) {
+      res.setHeader("X-Cache", "HIT");
+      res.json(cached);
+      return;
+    }
+
+    const client = await pool.connect();
+    let rows: any[] = [];
+    try {
+      const result = await client.query(
+        `SELECT district, count(DISTINCT pincode)::int as unique_pincodes, count(*)::int as total_post_offices 
+         FROM post_offices 
+         WHERE LOWER(state) = $1 
+         GROUP BY district 
+         ORDER BY district ASC`,
+        [state.toLowerCase().trim()]
+      );
+      rows = result.rows;
+    } finally {
+      client.release();
+    }
+
+    const response = {
+      status: "success",
+      state,
+      total_districts: rows.length,
+      districts: rows,
+    };
+
+    await cacheService.set(cacheKey, response);
+    res.setHeader("X-Cache", "MISS");
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * GET /api/v1/district/:district/pincodes
+ * List all pincodes in a district
+ */
+export async function getDistrictPincodes(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { district } = req.params;
+    const cacheKey = `district_pincodes:${district.toLowerCase().trim()}`;
+
+    const cached = await cacheService.get(cacheKey);
+    if (cached) {
+      res.setHeader("X-Cache", "HIT");
+      res.json(cached);
+      return;
+    }
+
+    const client = await pool.connect();
+    let rows: any[] = [];
+    try {
+      const result = await client.query(
+        `SELECT pincode, count(*)::int as post_offices_count 
+         FROM post_offices 
+         WHERE LOWER(district) = $1 
+         GROUP BY pincode 
+         ORDER BY pincode ASC`,
+        [district.toLowerCase().trim()]
+      );
+      rows = result.rows;
+    } finally {
+      client.release();
+    }
+
+    const response = {
+      status: "success",
+      district,
+      total_pincodes: rows.length,
+      pincodes: rows,
+    };
+
+    await cacheService.set(cacheKey, response);
+    res.setHeader("X-Cache", "MISS");
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+}

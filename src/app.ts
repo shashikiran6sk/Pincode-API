@@ -2,16 +2,29 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
+import swaggerUi from "swagger-ui-express";
 import { config } from "./config/index.js";
 import { router as pincodeRouter } from "./routes/pincode.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { checkDbHealth } from "./db/index.js";
 import { cacheService } from "./cache/index.js";
+import { swaggerDocument } from "./docs/swagger.js";
 
 export const app = express();
 
 // Security middleware
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
+  })
+);
 app.use(cors());
 app.use(express.json());
 
@@ -29,6 +42,26 @@ const limiter = rateLimit({
   ],
 });
 app.use(limiter);
+
+// Swagger JSON Specification endpoint (mounted before swaggerUi router)
+app.get("/docs/swagger.json", (_req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/json");
+  res.json(swaggerDocument);
+});
+
+// Swagger UI Documentation
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    customSiteTitle: "India Pincode API - Swagger Docs",
+    swaggerOptions: {
+      persistAuthorization: true,
+      url: "/docs/swagger.json",
+    },
+  })
+);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Health check endpoint (public, unauthenticated for probes/monitoring)
 app.get("/health", async (_req: Request, res: Response) => {
@@ -50,6 +83,8 @@ app.get("/", (_req: Request, res: Response) => {
     name: "India Pincode Directory API",
     version: "1.0.0",
     docs: {
+      swagger_ui: "GET /docs or /api-docs",
+      swagger_json: "GET /docs/swagger.json",
       lookup: "GET /pincode/:pincode (Headers: x-api-key)",
       rest_lookup: "GET /api/v1/pincode/:pincode (Headers: x-api-key)",
       search: "GET /api/v1/postoffice/:name (Headers: x-api-key)",

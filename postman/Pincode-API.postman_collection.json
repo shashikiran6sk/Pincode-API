@@ -1,0 +1,205 @@
+{
+  "info": {
+    "_postman_id": "c7a8b9e1-23d4-4f56-a789-0bc123456789",
+    "name": "India Pincode API",
+    "description": "High-performance backend API for Indian Postal PIN codes with complete, updated data for all 38 districts in Tamil Nadu (11,800+ post offices) and 157,000+ records across India.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "pincode_dev_secret_key_12345",
+      "type": "string"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "x-api-key",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Pincode Lookup (PostalPincode.in Format - 632006)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pincode/632006",
+          "host": ["{{baseUrl}}"],
+          "path": ["pincode", "632006"]
+        },
+        "description": "Returns post office details matching api.postalpincode.in structure with updated district data."
+      }
+    },
+    {
+      "name": "2. Pincode Lookup - Newly Carved District (Ranipet - 632401)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pincode/632401",
+          "host": ["{{baseUrl}}"],
+          "path": ["pincode", "632401"]
+        },
+        "description": "Accurately returns District as Ranipet (bifurcated from Vellore in 2019)."
+      }
+    },
+    {
+      "name": "3. Pincode Lookup - Chennai GPO (600001)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pincode/600001",
+          "host": ["{{baseUrl}}"],
+          "path": ["pincode", "600001"]
+        },
+        "description": "Returns all 6 post offices under Chennai GPO."
+      }
+    },
+    {
+      "name": "4. All 38 Districts in Tamil Nadu",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/state/Tamil%20Nadu/districts",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "state", "Tamil Nadu", "districts"]
+        },
+        "description": "Returns all 38 districts in Tamil Nadu with unique pincodes and post office counts."
+      }
+    },
+    {
+      "name": "5. All Pincodes in Tamil Nadu",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/state/Tamil%20Nadu/pincodes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "state", "Tamil Nadu", "pincodes"]
+        },
+        "description": "Returns all 2,000+ unique pincodes across Tamil Nadu."
+      }
+    },
+    {
+      "name": "6. All Pincodes in District (Vellore)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/district/Vellore/pincodes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "district", "Vellore", "pincodes"]
+        },
+        "description": "Returns all 51 pincodes and post office counts in Vellore district."
+      }
+    },
+    {
+      "name": "7. RESTful V1 Pincode with Delivery Filter",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/pincode/632006?delivery_status=Delivery",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "pincode", "632006"],
+          "query": [
+            {
+              "key": "delivery_status",
+              "value": "Delivery"
+            }
+          ]
+        },
+        "description": "RESTful format with query filtering (e.g. only delivery post offices)."
+      }
+    },
+    {
+      "name": "8. Search Post Office by Name",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/postoffice/Gandhinagar",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "postoffice", "Gandhinagar"]
+        },
+        "description": "Searches for post offices and their respective pincodes by branch or locality name."
+      }
+    },
+    {
+      "name": "9. Cache Performance & Stats",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/cache/stats",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "cache", "stats"]
+        },
+        "description": "Returns current memory cache size, max capacity, and Redis connection state."
+      }
+    },
+    {
+      "name": "10. Health Check Probe",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Public unauthenticated probe for container health monitoring."
+      }
+    },
+    {
+      "name": "11. Error Case - Missing API Key",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pincode/632006",
+          "host": ["{{baseUrl}}"],
+          "path": ["pincode", "632006"]
+        },
+        "description": "Verifies 401 Unauthorized when no API key is passed."
+      }
+    },
+    {
+      "name": "12. Error Case - Invalid Pincode Format",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/pincode/12345",
+          "host": ["{{baseUrl}}"],
+          "path": ["pincode", "12345"]
+        },
+        "description": "Verifies 400 Bad Request when pincode does not match 6-digit Indian PIN format."
+      }
+    }
+  ]
+}
