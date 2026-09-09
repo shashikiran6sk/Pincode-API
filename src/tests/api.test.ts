@@ -168,3 +168,19 @@ describe("6. System Health Check Endpoint", () => {
     expect(res.body.cache.redisConnected).toBe(true);
   });
 });
+
+describe("7. Swagger Documentation Endpoints", () => {
+  it("GET /docs/swagger.json returns valid OpenAPI 3.0 schema", async () => {
+    const res = await request(app).get("/docs/swagger.json");
+    expect(res.status).toBe(200);
+    expect(res.body.openapi).toBe("3.0.3");
+    expect(res.body.info.title).toBe("India Pincode Directory API");
+    expect(res.body.paths).toHaveProperty("/pincode/{pincode}");
+  });
+
+  it("GET /docs/ serves Swagger UI HTML", async () => {
+    const res = await request(app).get("/docs/");
+    expect(res.status).toBe(200);
+    expect(res.text).toContain("swagger-ui");
+  });
+});

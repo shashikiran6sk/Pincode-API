@@ -5,6 +5,8 @@ A high-performance, production-ready backend API for Indian Postal PIN codes wit
 Built strictly with:
 - **Runtime & Language**: Node.js & TypeScript
 - **Framework**: Express.js
+- **API Documentation**: Interactive **Swagger UI** (OpenAPI 3.0)
+- **API Client**: Exported **Postman Collection v2.1**
 - **Validation**: Zod
 - **Database**: PostgreSQL with connection pooling & B-Tree indexes
 - **Caching**: Tiered architecture with L1 In-Memory LRU Cache (`lru-cache`) and L2 Redis (`ioredis`)
@@ -16,12 +18,42 @@ Built strictly with:
 
 1. **Drop-in Compatible with `api.postalpincode.in`**:
    The `GET /pincode/:pincode` endpoint returns the exact schema expected by existing integrations, but with updated, accurate district and state details.
-2. **Sub-Millisecond Response Times**:
+2. **Interactive Swagger UI**:
+   Test and explore all endpoints directly in your browser at `http://localhost:3000/docs`.
+3. **Pre-Configured Postman Collection**:
+   Import `postman/Pincode-API.postman_collection.json` directly into Postman.
+4. **Sub-Millisecond Response Times**:
    L1 LRU in-memory cache delivers responses in <1ms. Responses include `X-Cache: HIT` or `X-Cache: MISS` headers.
-3. **Graceful Fallback**:
+5. **Graceful Fallback**:
    If Redis is not configured or goes down, the API automatically falls back to in-memory caching with zero downtime or disruption.
-4. **Streaming Big-Data Seeder**:
+6. **Streaming Big-Data Seeder**:
    Includes a streaming CSV parser capable of importing 150,000+ records from the official India Post directory without high memory usage.
+
+---
+
+## 📖 API Documentation & Postman
+
+### Interactive Swagger UI
+Access the Swagger documentation in your browser:
+- **Swagger UI**: [http://localhost:3000/docs](http://localhost:3000/docs) (or `/api-docs`)
+- **OpenAPI 3.0 JSON Spec**: [http://localhost:3000/docs/swagger.json](http://localhost:3000/docs/swagger.json)
+
+In Swagger UI, click the **Authorize** button at the top right and enter:
+`pincode_dev_secret_key_12345`
+
+### Postman Collection & Environments
+Pre-configured Postman files are located in the [`postman/`](./postman/) directory:
+- **Collection**: [`postman/Pincode-API.postman_collection.json`](./postman/Pincode-API.postman_collection.json)
+- **Local Environment**: [`postman/Pincode-API.postman_environment.json`](./postman/Pincode-API.postman_environment.json)
+- **Production Environment Template**: [`postman/Pincode-API-Prod.postman_environment.json`](./postman/Pincode-API-Prod.postman_environment.json)
+- **Postman Guide**: [`postman/README.md`](./postman/README.md)
+
+To import into Postman:
+1. Open Postman.
+2. Click **Import** (top left).
+3. Drag and drop both `Pincode-API.postman_collection.json` and `Pincode-API.postman_environment.json`.
+4. In the top-right environment selector, select **`Pincode API - Local Environment`**.
+5. All requests will automatically use `{{baseUrl}}` and authenticate via `x-api-key: {{apiKey}}`.
 
 ---
 
